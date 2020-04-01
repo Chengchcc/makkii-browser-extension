@@ -1,28 +1,40 @@
 {
   "manifest_version": 2,
-
-  "name": "Chrome Extension TypeScript Starter",
-  "description": "Chrome Extension, TypeScript, Visual Studio Code",
+  "name": "Makkii Extension",
+  "description": "makkii connect extension",
   "version": "1.0",
-
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
-
   "content_scripts": [
-      {
-          "matches": ["<all_urls>"],
-          "js": ["js/vendor.js", "js/content_script.js"]
-      }
+    {
+      "matches": [
+        "*://*.baidu.com/*"
+      ],
+      "js": [
+        "js/content_script.js"
+      ],
+      "run_at": "document_end",
+      "all_frames": true
+    }
   ],
-
-  "background": {
-    "scripts": ["js/vendor.js", "js/background.js"]
+  "externally_connectable": {
+    "matches": [
+      "*://*.baidu.com/*"
+    ]
   },
-
+  "background": {
+    "scripts": [
+      "js/vendor.js",
+      "js/background.js"
+    ]
+  },
   "permissions": [
     "storage",
     "<all_urls>"
+  ],
+  "web_accessible_resources": [
+    "js/inpage.js"
   ]
 }

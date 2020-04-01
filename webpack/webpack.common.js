@@ -7,7 +7,8 @@ module.exports = {
     entry: {
         popup: path.join(__dirname, srcDir + 'popup.tsx'),
         background: path.join(__dirname, srcDir + 'background.ts'),
-        content_script: path.join(__dirname, srcDir + 'content_script.ts')
+        content_script: path.join(__dirname, srcDir + 'content_script.ts'),
+        inpage: path.join(__dirname, srcDir + 'inpage.ts')
     },
     output: {
         path: path.join(__dirname, '../build/js'),
@@ -22,9 +23,25 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
+                test: /\.(js|jsx|ts|tsx)$/,
+                use: 'babel-loader',
                 exclude: /node_modules/
+            },
+            {
+                test: [/\.less$/], use: [
+                    {
+                        loader: require.resolve('style-loader'),
+                    },
+                    {
+                        loader: require.resolve('css-loader'),
+                    },
+                    {
+                        loader: require.resolve('less-loader'),
+                        options: {
+                            javascriptEnabled: true
+                        }
+                    },
+                ]
             }
         ]
     },
@@ -35,8 +52,8 @@ module.exports = {
         // exclude locale files in moment
         new CopyPlugin([
             { from: '.', to: '../' }
-          ],
-          {context: 'chrome' }
+        ],
+            { context: 'chrome' }
         ),
     ]
 };
