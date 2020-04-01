@@ -43,6 +43,7 @@ window.register = () => new Promise((resolve, reject)=>{
     }).catch(err => {
         // register failed
         console.log('err=>', err)
+        store.dispatch(createAction("status/registerErr")({msg: JSON.stringify(err)}))
         reject(err);
     })
 });

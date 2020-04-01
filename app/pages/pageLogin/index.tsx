@@ -13,13 +13,18 @@ const Login: React.FC = () => {
     const dispatch = useDispatch();
     const history = useHistory();
 
-    // states
-    const [loading, setLoading] = React.useState(false);
+
 
     // selectors
     const signature = useSelector((state: rootReducers) => state.status.signature)
     const channel = useSelector((state: rootReducers) => state.status.channel)
     const session = useSelector((state: rootReducers) => state.status.session)
+    const errMsg = useSelector((state: rootReducers)=> state.status.errMsg)
+
+    // states
+    const [loading, setLoading] = React.useState(false);
+
+    const needManual = errMsg!=="";
 
 
     // effects
@@ -35,6 +40,9 @@ const Login: React.FC = () => {
         <div className="main">
             <div className="qrcode">
                 <QRCode value={JSON.stringify({ signature, channel })} size={280} />
+            </div>
+            <div className="qrcode-mask">
+
             </div>
         </div>
     )

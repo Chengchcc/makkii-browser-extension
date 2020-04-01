@@ -13,9 +13,16 @@ button.btn-connect {
 
 .qrcode {
     position: absolute;
-    width: 280px;
+    width: 300px;
+    height: 300px;
+    align-self: start;
     top: 60px;
     left: 50%;
     transform: translateX(-50%);
 
+}
+
+.qrcode-mask {
+    .qrcode();
+    background-color: rgba(0, 0, 0, 0.1);
 }

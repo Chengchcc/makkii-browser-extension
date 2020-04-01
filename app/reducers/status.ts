@@ -5,6 +5,7 @@ const defaultState: StatusState = {
     session: false,
     browserId: "",
     mobileId: "",
+    errMsg: "",
 }
 
 
@@ -16,7 +17,9 @@ export default (state = defaultState, action: ReducerAction) => {
         case "status/logout":
             return { ...state, session: false }
         case "status/register":
-            return { ...state, signature: action.payload.signature, channel: action.payload.channel }
+            return { ...state, signature: action.payload.signature, channel: action.payload.channel, errMsg: "" }
+        case "status/registerErr":
+            return { ...state, signature: "", channel: "", errMsg: action.payload.msg }
     }
     return state;
 }

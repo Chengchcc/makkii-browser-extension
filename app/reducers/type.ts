@@ -10,6 +10,7 @@ interface StatusState {
     session: boolean
     browserId: string
     mobileId: string
+    errMsg: string
 }
 
 
