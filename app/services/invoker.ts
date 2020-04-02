@@ -1,3 +1,6 @@
+/* eslint-disable no-plusplus */
+/* eslint-disable no-underscore-dangle */
+import { Deferred } from "./deferred";
 
 const SYNC_COMMAND = "EXTENSION:SYNC";
 
@@ -16,62 +19,24 @@ interface MsgPayload<T> {
 }
 
 export interface MessageHandeler<T> {
-    send: (event: T, payload: any|never)=>void;
-    addListener: (event: T, listener: (payload: any | never) => void)=>void
-    isConnect: ()=>boolean;
+    send: (event: T, payload: any | never) => void;
+    addListener: (event: T, listener: (payload: any | never) => void) => void;
+    isConnect: () => boolean;
 }
-
-
-export class Deferred<T> implements Promise<T> {
-    readonly [Symbol.toStringTag]: "Promise";
-    promise: Promise<T>;
-    resolve: (value?: T) => void = () => { };
-    reject: (reason?: T) => void = () => { };
-
-    constructor() {
-        this.promise = new Promise((resolve, reject) => {
-            this.resolve = resolve;
-            this.reject = reject;
-        });
-    }
-
-    then<TResult1 = T, TResult2 = never>(
-        onfulfilled?:
-            | ((value: T) => TResult1 | PromiseLike<TResult1>)
-            | null
-            | undefined,
-        onrejected?:
-            | ((reason: any) => TResult2 | PromiseLike<TResult2>)
-            | null
-            | undefined
-    ): Promise<TResult1 | TResult2> {
-        return this.promise.then(onfulfilled, onrejected);
-    }
-    catch<TResult = never>(
-        onrejected?:
-            | ((reason: any) => TResult | PromiseLike<TResult>)
-            | null
-            | undefined
-    ): Promise<T | TResult> {
-        return this.promise.catch(onrejected);
-    }
-    finally(onfinally?: (() => void) | null | undefined): Promise<T> {
-        return this.promise.finally(onfinally);
-    }
-}
-
 
 type Callback = (...data: any[]) => any;
 
 type BindFunction = (...args: any) => Deferred<any>;
 
-
 class Invoker<T extends MessageHandeler<string>> {
-
     private uid = 0;
+
     private messager: T;
+
     channel: string | undefined;
+
     prefix: string | undefined;
+
     // msg transaction
     private transactions: Map<string, Deferred<any>> = new Map();
 
@@ -86,11 +51,7 @@ class Invoker<T extends MessageHandeler<string>> {
 
     private __sync: BindFunction | undefined;
 
-    constructor(opts: {
-        prefix: string;
-        messager: T
-        channel?: string;
-    }) {
+    constructor(opts: { prefix: string; messager: T; channel?: string }) {
         this.messager = opts.messager;
         this.channel = opts.channel;
         this.prefix = opts.prefix;
@@ -110,7 +71,6 @@ class Invoker<T extends MessageHandeler<string>> {
         return this.messager.isConnect() && this.needWait.length === 0;
     };
 
-
     private getTransactionKey = (data: MsgPayload<any>): string => {
         return `${data.command}(${data.id})`;
     };
@@ -123,12 +83,10 @@ class Invoker<T extends MessageHandeler<string>> {
         const force = data.command == SYNC_COMMAND;
         if (!force && !this.isConnect()) {
             this.needWait.push(data);
+        } else if (this.messager.isConnect()) {
+            this.messager.send(this.channel!, data);
         } else {
-            if (this.messager.isConnect()) {
-                this.messager.send(this.channel!, data);
-            } else {
-                this.needWait.push(data);
-            }
+            this.needWait.push(data);
         }
     };
 
@@ -198,8 +156,8 @@ class Invoker<T extends MessageHandeler<string>> {
 
     private _sync = (defines: string[] = []): string[] => {
         defines
-            .filter(d => !this.fns.has(d))
-            .map(d => {
+            .filter((d) => !this.fns.has(d))
+            .map((d) => {
                 this.fns.set(d, this.bind(d));
             });
         this.initialize();

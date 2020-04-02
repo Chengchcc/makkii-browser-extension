@@ -1,10 +1,9 @@
-import * as React from 'react'
-import {HashRouter, Switch, Route, Redirect} from 'react-router-dom'
-
+import * as React from "react";
+import { HashRouter, Switch, Route, Redirect } from "react-router-dom";
 
 // pages
-import PageLogin from './pageLogin'
-import PageStatus from './pageStatus'
+import PageLogin from "./pageLogin";
+import PageStatus from "./pageStatus";
 
 const App = () => {
     return (
@@ -15,9 +14,7 @@ const App = () => {
                 <Redirect from="/" to="/status" />
             </Switch>
         </HashRouter>
-    )
-}
+    );
+};
 
 export default App;
-
-

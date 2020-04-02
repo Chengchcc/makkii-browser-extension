@@ -11,11 +11,17 @@ button.btn-connect {
     transform: translateX(-50%);
 }
 
+@qrcode-size: 300px;
+
+@svg-size: 40px;
+@btn-size: 80px;
+
 .qrcode {
+    box-sizing: border-box;
     position: absolute;
-    width: 300px;
-    height: 300px;
-    align-self: start;
+    width: @qrcode-size;
+    height: @qrcode-size;
+    padding: 10px;
     top: 60px;
     left: 50%;
     transform: translateX(-50%);
@@ -24,5 +30,63 @@ button.btn-connect {
 
 .qrcode-mask {
     .qrcode();
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.9);
+
+    .refresh {
+        position: relative;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        height: @svg-size;
+        width: @svg-size;
+        fill: @color-coral;
+    }
+
+    .qrcode-mask-btn {
+        position: absolute;
+        top: calc(@qrcode-size / 2 - @btn-size / 2);
+        left: calc(@qrcode-size / 2 - @btn-size / 2);
+        height: @btn-size;
+        width: @btn-size;
+        border-radius: 50%;
+        background-color: #fff;
+        align-items: center;
+        box-shadow:  0px 0px 20px rgb(0,0,0,0.4);
+        cursor: pointer;
+    }
+
+    .loading {
+        animation: turn 1.5s linear infinite;
+    }
+}
+
+.hint {
+    display: block;
+    position: relative;
+    top: calc(60px + @qrcode-size + 20px);
+    left: 50%;
+    text-align: center;
+    transform: translateX(-50%);
+}
+
+@keyframes turn {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(90deg);
+    }
+
+    50% {
+        transform: rotate(180deg);
+    }
+
+    75% {
+        transform: rotate(270deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }

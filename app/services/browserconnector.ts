@@ -1,7 +1,7 @@
-import BrowserConnector from  'socket-bridge/lib/connectors/browserConnectorAdapter'
-import * as io from 'socket.io-client'
+import BrowserConnector from "socket-bridge/packages/browser";
+import * as io from "socket.io-client";
 
-const conn = io('http://localhost:8888');
+const conn = io("http://localhost:8888");
 const connector = new BrowserConnector(conn);
 
-export default connector
+export default connector;

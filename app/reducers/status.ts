@@ -1,4 +1,3 @@
-
 const defaultState: StatusState = {
     signature: "",
     channel: "",
@@ -6,20 +5,37 @@ const defaultState: StatusState = {
     browserId: "",
     mobileId: "",
     errMsg: "",
-}
-
-
+    isConnect: false
+};
 
 export default (state = defaultState, action: ReducerAction) => {
     switch (action.type) {
         case "status/login":
-            return { ...state, session: true, browserId: action.payload.browserId, mobileId: action.payload.mobileId }
+            return {
+                ...state,
+                session: true,
+                browserId: action.payload.browserId,
+                mobileId: action.payload.mobileId
+            };
         case "status/logout":
-            return { ...state, session: false }
+            return { ...state, session: false };
         case "status/register":
-            return { ...state, signature: action.payload.signature, channel: action.payload.channel, errMsg: "" }
+            return {
+                ...state,
+                signature: action.payload.signature,
+                channel: action.payload.channel,
+                errMsg: ""
+            };
         case "status/registerErr":
-            return { ...state, signature: "", channel: "", errMsg: action.payload.msg }
+            return {
+                ...state,
+                signature: "",
+                channel: "",
+                errMsg: action.payload.msg
+            };
+        case "status/setConnect":
+            return { ...state, isConnect: action.payload.isConnect };
+        default:
+            return state;
     }
-    return state;
-}
+};
