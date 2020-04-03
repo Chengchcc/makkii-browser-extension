@@ -58,8 +58,6 @@ window.register = () =>
             });
     });
 
-window.register();
-
 /*= =============================================================== */
 
 /*= ==========================background local function===================================== */
@@ -95,6 +93,10 @@ const connectCheck = () => {
     console.log("isConnect=>", isConnect);
     if (isConnect !== store.getState().status.isConnect) {
         store.dispatch(createAction("status/setConnect")({ isConnect }));
+        if (isConnect) {
+            clearTimeout(nextTimer);
+            window.register();
+        }
     }
     setTimeout(() => connectCheck(), 5 * 1000);
 };
