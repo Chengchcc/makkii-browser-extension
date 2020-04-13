@@ -20,13 +20,13 @@ const tx_field = [
     },
     {
         key: "gasPrice",
-        title: "GASP RICE",
+        title: "GAS PRICE",
         render: (tx: UnsignedTx) => {
             const unit = tx.cointype === "AION" ? "AMP" : "WEI";
             return `${tx.gasPrice} ${unit}`;
         }
     },
-    { key: "gasLimit", title: "GASL IMIT" },
+    { key: "gasLimit", title: "GAS LIMIT" },
     { key: "data", title: "DATA" },
     {
         key: "byteFee",

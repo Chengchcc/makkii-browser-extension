@@ -1,7 +1,7 @@
 import Invoker, { MessageHandeler } from "../services/invoker";
 import { showSelectAccount, showTransaction } from "./dialogs";
 import { formatTx } from "../utils";
-
+import { extensionID } from "../constants.json";
 interface MakkiiConector {
     selectAccount: (
         callback: (accounts: CoinAccount, err: string) => {}
@@ -19,9 +19,6 @@ declare global {
         makkiiConnector: MakkiiConector;
     }
 }
-
-const extensionID = "copkncacaplonglcmenbaihilmfepilb";
-
 type PromiseFunc = (...args: any) => Promise<any>;
 
 class AdvancedInvoker<T extends MessageHandeler<any>> extends Invoker<T> {

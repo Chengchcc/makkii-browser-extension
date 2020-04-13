@@ -10,7 +10,7 @@ const Dialog: React.FC<Props> = (props) => {
     const { children, onClose } = props;
     const containerRef = React.useRef<HTMLDivElement>(null);
     const headerRef = React.useRef<HTMLDivElement>(null);
-
+    const bgRef = React.useRef<HTMLDivElement>(null);
     React.useEffect(() => {
         let offsetLeft, offestTop, containerHeight, containerWidth;
         const onMoseMove = (evt: MouseEvent) => {
@@ -48,9 +48,10 @@ const Dialog: React.FC<Props> = (props) => {
 
     return (
         <div
+            ref={bgRef}
             className="dialog-bg"
             onClick={(e) => {
-                const el = document.querySelector<HTMLDivElement>(
+                const el = bgRef.current.querySelector<HTMLDivElement>(
                     ".dialog-container"
                 );
                 el.className = "dialog-container dialog-alert";
