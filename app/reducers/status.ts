@@ -1,40 +1,19 @@
 const defaultState: StatusState = {
     signature: "",
     channel: "",
-    session: false,
-    browserId: "",
-    mobileId: "",
-    errMsg: "",
-    isConnect: false
+    isReady: false,
+    isConnect: false,
+    isAlive: false,
+    isExpired: false
 };
 
 export default (state = defaultState, action: ReducerAction) => {
     switch (action.type) {
-        case "status/login":
+        case "status/update":
             return {
                 ...state,
-                session: true,
-                browserId: action.payload.browserId,
-                mobileId: action.payload.mobileId
+                ...action.payload
             };
-        case "status/logout":
-            return { ...state, session: false };
-        case "status/register":
-            return {
-                ...state,
-                signature: action.payload.signature,
-                channel: action.payload.channel,
-                errMsg: ""
-            };
-        case "status/registerErr":
-            return {
-                ...state,
-                signature: "",
-                channel: "",
-                errMsg: action.payload.msg
-            };
-        case "status/setConnect":
-            return { ...state, isConnect: action.payload.isConnect };
         default:
             return state;
     }

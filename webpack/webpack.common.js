@@ -9,7 +9,7 @@ module.exports = {
         popup: path.join(__dirname, `${srcDir}popup.tsx`),
         background: path.join(__dirname, `${srcDir}background.ts`),
         content_script: path.join(__dirname, `${srcDir}content_script.ts`),
-        inpage: path.join(__dirname, `${srcDir}inpage.ts`)
+        inpage: path.join(__dirname, `${srcDir}inpage/index.ts`)
     },
     output: {
         path: path.join(__dirname, "../build/js"),
@@ -47,7 +47,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(png|jpg)$/,
+                test: /\.(png|jpg|ttf)$/,
                 loader: "url-loader?limit=8192"
             },
             {

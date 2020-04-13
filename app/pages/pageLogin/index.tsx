@@ -1,55 +1,46 @@
 import * as React from "react";
-import "./style.less";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 import * as QRCode from "qrcode.react";
-import { createAction } from "../../utils";
 import { rootReducers } from "../../reducers";
 
 import RefreshSvg from "../../assets/refresh.svg";
 import BrokenSvg from "../../assets/broken-link.svg";
 
-const hints = {
-    CONNECT_FAILD: "Unable to connect to server",
-    AUTO_REGISTER_ERROR: "The QRcode has expired, please refresh it manually",
-    NORMAL: "Scan to log in to MAKKII"
-};
+import "./style.less";
 
 const Login: React.FC = () => {
-    // tooling
-    const dispatch = useDispatch();
+    /*===================toolings===========================================*/
     const history = useHistory();
 
-    // selectors
+    /*===================selectors==========================================*/
+    // signature
     const signature = useSelector(
         (state: rootReducers) => state.status.signature
     );
+    // channel
     const channel = useSelector((state: rootReducers) => state.status.channel);
-    const session = useSelector((state: rootReducers) => state.status.session);
-    const errMsg = useSelector((state: rootReducers) => state.status.errMsg);
+
+    // is connect to mobile
     const isConnect = useSelector(
         (state: rootReducers) => state.status.isConnect
     );
+    // is connect to relay server
+    const isReady = useSelector((state: rootReducers) => state.status.isReady);
 
-    // states
+    /*===================states==========================================*/
     const [loading, setLoading] = React.useState(false);
 
-    const needManual = errMsg !== "";
-
-    const hint = !isConnect
-        ? hints.CONNECT_FAILD
-        : needManual
-        ? hints.AUTO_REGISTER_ERROR
-        : hints.NORMAL;
-    // effects
+    /*===================selectors==========================================*/
     React.useEffect(() => {
-        if (session) {
+        if (isConnect) {
             history.replace("/status");
         }
-    }, [session]);
+    }, [isConnect]);
 
-    // handelers
+    /*===================handler==========================================*/
     const onManual = () => {
+        if (!isReady) return;
         setLoading(true);
         window
             .register()
@@ -57,36 +48,41 @@ const Login: React.FC = () => {
             .catch(() => setLoading(false));
     };
 
-    // render
+    /*===================renders==========================================*/
     return (
-        <div className="main">
+        <>
+            <div className="hint">Scan to login Makkii</div>
             <div className="qrcode">
                 <QRCode
                     value={JSON.stringify({ signature, channel })}
-                    size={280}
+                    size={250}
                 />
             </div>
-            {isConnect && needManual ? (
+            {loading ? (
                 <div className="qrcode-mask">
-                    <div
-                        className={`qrcode-mask-btn ${
-                            loading ? " loading" : ""
-                        }`}
-                        onClick={onManual}
-                    >
+                    <div className={`qrcode-mask-btn loading`}>
                         <RefreshSvg className={`refresh }`} />
                     </div>
                 </div>
             ) : null}
-            {!isConnect ? (
+            {!isReady ? (
                 <div className="qrcode-mask">
-                    <div className="qrcode-mask-btn">
+                    <div className="qrcode-mask-btn" style={{ cursor: "auto" }}>
                         <BrokenSvg className="refresh" />
                     </div>
                 </div>
             ) : null}
-            <span className="hint">{hint}</span>
-        </div>
+            {/* mannual refresh btn */}
+            <div className="btn-guides">Guides</div>
+            <div className="btn-refresh" onClick={onManual}>
+                Refresh <RefreshSvg className="img-refresh" />
+            </div>
+            {!isReady ? (
+                <div className="err-msg">
+                    Unable to connect to makkii server
+                </div>
+            ) : null}
+        </>
     );
 };
 export default Login;

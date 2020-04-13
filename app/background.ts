@@ -4,10 +4,14 @@ import rootState, { rootReducers } from "./reducers";
 import connector from "./services/browserconnector";
 import { createAction } from "./utils";
 import Invoker, { MessageHandeler } from "./services/invoker";
+import { ErrorNotConnectMobile } from "./types/error";
 
 declare global {
     interface Window {
         register: () => Promise<any>;
+        getAccount: (...args: any[]) => Promise<any>;
+        sendTransaction: (...args: any[]) => Promise<any>;
+        disconnectChannel: () => Promise<any>;
         store: Store<rootReducers>;
         invokerMap: Map<string, Invoker<any>>;
     }
@@ -29,34 +33,67 @@ window.register = () =>
             .register()
             .then((res) => {
                 const { result, body } = res;
-                console.log("res=>", res);
                 if (result) {
                     // register success
                     const { signature, channel, expiration } = body;
                     store.dispatch(
-                        createAction("status/register")({ signature, channel })
+                        createAction("status/update")({ signature, channel })
                     );
-                    if (nextTimer) {
-                        clearTimeout(nextTimer);
-                        nextTimer = null;
+                    if (expiration !== "INFINITY") {
+                        if (nextTimer) {
+                            clearTimeout(nextTimer);
+                            nextTimer = null;
+                        }
+                        nextTimer = setTimeout(() => {
+                            window.register();
+                        }, expiration);
                     }
-                    nextTimer = setTimeout(() => {
-                        window.register();
-                    }, expiration);
                 }
                 resolve(res);
             })
             .catch((err) => {
                 // register failed
-                console.log("err=>", err);
+                console.error("register err=>", err);
                 store.dispatch(
-                    createAction("status/registerErr")({
-                        msg: JSON.stringify(err)
+                    createAction("status/update")({
+                        errMsg: JSON.stringify(err)
                     })
                 );
                 reject(err);
             });
     });
+
+window.disconnectChannel = async () => {
+    connector.disconnectChannel();
+    store.dispatch(
+        createAction("status/update")({
+            isAlive: false,
+            isConnect: false,
+            isExpired: false
+        })
+    );
+    window.register();
+};
+
+window.getAccount = async (...args) => {
+    if (!store.getState().status.isConnect) {
+        throw ErrorNotConnectMobile;
+    }
+    const accounts: Array<AccountList> = await connector.getAccount(...args);
+    const map = accounts.reduce((map_, el) => {
+        map_[el.key] = el.data;
+        return map_;
+    }, {});
+    store.dispatch(createAction("accounts/update")(map));
+    return accounts;
+};
+
+window.sendTransaction = async (...args) => {
+    if (!store.getState().status.isConnect) {
+        throw ErrorNotConnectMobile;
+    }
+    return await connector.sendTransaction(...args);
+};
 
 /*= =============================================================== */
 
@@ -65,36 +102,34 @@ window.register = () =>
 const sessionCheck = () => {
     connector
         .getSessionStatus()
-        .then((res) => {
-            console.log("getStatus res=>", res);
-            const { browser, mobile } = res;
-            if (!store.getState().status.session) {
-                store.dispatch(
-                    createAction("status/login")({
-                        browserId: browser.id,
-                        mobileId: mobile.id
-                    })
-                );
+        .then((payload) => {
+            store.dispatch(createAction("status/update")(payload));
+            if (!store.getState().status.isAlive && payload.isAlive) {
+                window.getAccount();
             }
         })
         .catch((err) => {
-            console.log("getStatus err=>", err);
-            if (store.getState().status.session) {
-                store.dispatch(createAction("status/logout")({}));
-            }
+            console.error("session err=>", err);
+            store.dispatch(
+                createAction("status/update")({
+                    isAlive: false,
+                    isReady: false,
+                    isConnect: false,
+                    isExpired: false
+                })
+            );
         });
     setTimeout(() => sessionCheck(), 5 * 1000);
 };
 
-// connect health check
-
+// connect relay server health check
 const connectCheck = () => {
-    const isConnect = connector.socket.connected;
-    console.log("isConnect=>", isConnect);
-    if (isConnect !== store.getState().status.isConnect) {
-        store.dispatch(createAction("status/setConnect")({ isConnect }));
-        if (isConnect) {
+    const isReady = connector.socket.connected;
+    if (isReady !== store.getState().status.isReady) {
+        store.dispatch(createAction("status/update")({ isReady }));
+        if (isReady) {
             clearTimeout(nextTimer);
+            nextTimer = null;
             window.register();
         }
     }
@@ -116,12 +151,27 @@ let uid = 0;
 type PromiseFunc = (...args: any) => Promise<any>;
 
 class AdvancedInvoker<T extends MessageHandeler<any>> extends Invoker<T> {
-    getAccount: PromiseFunc = (...args: any) => connector.getAccount(args);
+    getAccount: PromiseFunc = async (cointype?: string) => {
+        const accounts = store.getState().accounts;
+        const arr = Object.keys(accounts).reduce((arr, el) => {
+            if (accounts[el].length > 0) {
+                if (cointype === undefined || cointype === el) {
+                    arr.push({ key: el, data: accounts[el] });
+                }
+            }
+            return arr;
+        }, []);
+        return arr;
+    };
 
-    sendTransaction: PromiseFunc = (...args: any) =>
-        connector.sendTransaction(args);
+    sendTransaction: PromiseFunc = (...args: any) => {
+        return window.sendTransaction(...args);
+    };
 
-    chatMobile: PromiseFunc = (...args: any) => connector.chatMobile(args);
+    isConnectToMobile = () => {
+        return store.getState().status.isAlive;
+        // return true;
+    };
 
     constructor(messager: T) {
         super({ prefix: `browser:${name}`, messager, channel: "" });
@@ -131,7 +181,7 @@ class AdvancedInvoker<T extends MessageHandeler<any>> extends Invoker<T> {
         this.baseInit();
         this.define("getAccount", this.getAccount);
         this.define("sendTransaction", this.sendTransaction);
-        this.define("chatMobile", this.chatMobile);
+        this.define("isConnectToMobile", this.isConnectToMobile);
     };
 }
 
@@ -171,4 +221,13 @@ chrome.runtime.onMessageExternal.addListener(function (
     }
 });
 
+chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    // read changeInfo data and do something with it
+    // like send the new url to contentscripts.js
+    if (changeInfo.status === "complete") {
+        chrome.tabs.sendMessage(tabId, {
+            message: "inject"
+        });
+    }
+});
 /*= =============================================================== */

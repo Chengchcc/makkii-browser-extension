@@ -32,9 +32,13 @@
   },
   "permissions": [
     "storage",
-    "<all_urls>"
+    "<all_urls>",
+    "tabs"
   ],
   "web_accessible_resources": [
-    "js/inpage.js"
+    "js/inpage.js",
+    "js/vendor.js",
+    "assets/sansation.ttf",
+    "assets/makkii.ttf"
   ]
 }

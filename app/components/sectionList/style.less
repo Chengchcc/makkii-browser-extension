@@ -1,0 +1,59 @@
+.section-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    ul {
+        padding: 0;
+        list-style-type: none;
+    }
+
+
+    .hide {
+        ul {
+            display: none;
+            height: 0px;
+        }
+    }
+
+    .section-title {
+        font-family: Sansation;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        color: #000000;
+        cursor: pointer;
+
+        span {
+            display: inline-block;
+            width: 40px;
+        }
+
+        .btn-arrow {
+            height: 15px;
+            width: 15px;
+        }
+    }
+
+    .no-accounts {
+        position: absolute;
+        height: 150px;
+        width: 200px;
+        top: 20px;
+        color: #274FB5;
+        left: 50px
+    }
+
+    .hint {
+        position: absolute;
+        font-family: Sansation;
+        font-style: normal;
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 16px;
+        top: 200px;
+        left: 50%;
+        width: fit-content;
+        transform: translateX(-50%);
+    }
+}

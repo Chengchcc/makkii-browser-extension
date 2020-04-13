@@ -3,7 +3,7 @@
 import { Deferred } from "./deferred";
 
 const SYNC_COMMAND = "EXTENSION:SYNC";
-
+const INVOKER_TIMEOUT = 5 * 60 * 1000;
 enum PayloadStatus {
     success,
     fail,
@@ -105,17 +105,32 @@ class Invoker<T extends MessageHandeler<string>> {
         } else if (this.callbacks.has(data.command)) {
             // request from b and has bind callback
             const callback = this.callbacks.get(data.command)!;
-            const result = callback(data.data);
-            if (result && result.then) {
-                result
-                    .then((d: any) =>
-                        this.reply(data, d, PayloadStatus.success)
-                    )
-                    .catch((e: any) => this.reply(data, e, PayloadStatus.fail));
-            } else {
-                this.reply(data, result, PayloadStatus.success);
+            // timeout
+            const timer = setTimeout(() => {
+                this.reply(data, "invoker time out", PayloadStatus.fail);
+            }, INVOKER_TIMEOUT);
+            try {
+                const result = callback(data.data);
+                if (result && result.then) {
+                    result
+                        .then((d: any) => {
+                            this.reply(data, d, PayloadStatus.success);
+                            clearTimeout(timer);
+                        })
+                        .catch((e: any) => {
+                            this.reply(data, e, PayloadStatus.fail);
+                            clearTimeout(timer);
+                        });
+                } else {
+                    this.reply(data, result, PayloadStatus.success);
+                    clearTimeout(timer);
+                }
+            } catch (err) {
+                this.reply(data, err, PayloadStatus.success);
+                clearTimeout(timer);
             }
         } else {
+            console.log("result=> not found");
             // request but not bind
             this.reply(data, null, PayloadStatus.fail);
         }

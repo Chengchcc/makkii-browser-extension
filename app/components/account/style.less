@@ -1,0 +1,100 @@
+.account {
+    position: relative;
+    width: 300px;
+    height: 80px;
+    background: #FFFFFF;
+    border-radius: 5px;
+    margin: 10px 0;
+    font-family: Sansation;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 14px;
+
+    .img-coin {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        left: 20px;
+        top: 12px;
+    }
+
+    .acc-name {
+        position: absolute;
+        width: 49px;
+        height: 16px;
+        left: 80px;
+        top: 13px;
+        color: #000000;
+        text-align: left;
+    }
+
+    .acc-addr {
+        position: absolute;
+        width: 130px;
+        height: 11px;
+        left: 80px;
+        bottom: 16px;
+        font-size: 10px;
+        color: #000000;
+        text-align: left;
+    }
+
+    .acc-amount {
+        position: absolute;
+        height: 16px;
+        right: 20px;
+        top: 13px;
+        text-align: right;
+        color: #000000;
+    }
+
+    .acc-cointype {
+        position: absolute;
+        height: 16px;
+        right: 20px;
+        bottom: 13px;
+        text-align: right;
+        font-size: 12px;
+        color: #000000;
+    }
+}
+
+.select {
+    width: 320px;
+    cursor: pointer;
+
+    .img-coin {
+        left: 40px;
+    }
+
+    .acc-name {
+        left: 100px;
+    }
+
+    .acc-addr {
+        left: 100px;
+    }
+
+    button.select-box {
+        position: absolute;
+        top: 30px;
+        left: 10px;
+        height: 20px;
+        width: 20px;
+        font-family: Makkii;
+        font-size: 20px;
+        display: block;
+        border: 0;
+        padding: 0;
+        outline: 0;
+        background-color: rgba(0, 0, 0, 0);
+    }
+
+    button.select::after {
+        content: '\e001';
+    }
+
+    button.unselect::after {
+        content: '\e002';
+    }
+}

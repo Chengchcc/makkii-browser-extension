@@ -3,17 +3,20 @@ import { HashRouter, Switch, Route, Redirect } from "react-router-dom";
 
 // pages
 import PageLogin from "./pageLogin";
-import PageStatus from "./pageStatus";
+import PageAccountList from "./pageAccountList";
+import Layout from "../layout";
 
 const App = () => {
     return (
-        <HashRouter>
-            <Switch>
-                <Route exact path="/login" component={PageLogin} />
-                <Route path="/status" component={PageStatus} />
-                <Redirect from="/" to="/status" />
-            </Switch>
-        </HashRouter>
+        <Layout>
+            <HashRouter>
+                <Switch>
+                    <Route exact path="/login" component={PageLogin} />
+                    <Route path="/status" component={PageAccountList} />
+                    <Redirect from="/" to="/status" />
+                </Switch>
+            </HashRouter>
+        </Layout>
     );
 };
 
