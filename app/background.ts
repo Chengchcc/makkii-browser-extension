@@ -185,13 +185,15 @@ class AdvancedInvoker<T extends MessageHandeler<any>> extends Invoker<T> {
     };
 }
 
-chrome.runtime.onConnectExternal.addListener((port) => {
+chrome.runtime.onConnect.addListener((port) => {
     // connect from inject
-    const name = uid++;
+    const [prefix, tabId] = port.name.split(":");
+    console.log("listening a port:", port.name);
+    if (prefix !== "tab") return;
     let connect = true;
     port.onDisconnect.addListener(() => {
         connect = false;
-        Maps.delete(name);
+        Maps.delete(tabId);
     });
     const messager: MessageHandeler<string> = {
         send: (evt, payload) => {
@@ -207,27 +209,23 @@ chrome.runtime.onConnectExternal.addListener((port) => {
     const invoker = new AdvancedInvoker(messager);
     invoker.init();
     console.log("add invoker:", invoker);
-    Maps.set(name, invoker);
-});
-
-chrome.runtime.onMessageExternal.addListener(function (
-    message,
-    sender,
-    sendResponse
-) {
-    if (message.type == "createInvoker") {
-        console.log("createInvoker");
-        sendResponse({ tabId: sender.tab.id });
-    }
+    Maps.set(tabId, invoker);
 });
 
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     // read changeInfo data and do something with it
     // like send the new url to contentscripts.js
     if (changeInfo.status === "complete") {
+        console.log(tabId, changeInfo, tab);
         chrome.tabs.sendMessage(tabId, {
             message: "inject"
         });
+    }
+});
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.type == "getTabId") {
+        sendResponse({ tabId: sender.tab.id });
     }
 });
 /*= =============================================================== */

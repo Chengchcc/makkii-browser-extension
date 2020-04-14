@@ -25,12 +25,52 @@ const inject = () => {
     injectFontFamily("Sansation", "assets/sansation.ttf");
 };
 
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    // listen for messages sent from background.js
-    if (request.message === "inject") {
-        console.log("url change!try to inject");
-        setTimeout(() => {
-            inject(); // new url is now in content scripts!
-        }, 500);
-    }
+// relay
+
+chrome.runtime.sendMessage({ type: "getTabId" }, function (res) {
+    const { tabId } = res;
+    const portName = `tab:${tabId}`;
+
+    // message stream: page-[window]-contentscript-[port]-background
+    const port = chrome.runtime.connect({ name: portName }); // connection to bg
+    port.onMessage.addListener((msg) => {
+        window.postMessage(
+            {
+                type: "FROM_CONTENT",
+                text: JSON.stringify(msg)
+            },
+            "*"
+        );
+    });
+
+    window.addEventListener("message", (event) => {
+        if (event.source != window) return;
+        if (event.data.type && event.data.type == "FROM_PAGE") {
+            const payload = JSON.parse(event.data.text);
+            port.postMessage(payload);
+        }
+    });
+
+    chrome.runtime.onMessage.addListener(function (
+        request,
+        sender,
+        sendResponse
+    ) {
+        // listen for messages sent from background.js
+        if (request.message === "inject") {
+            console.log("url change!try to inject");
+            setTimeout(() => {
+                inject(); // new url is now in content scripts!
+                setTimeout(() => {
+                    window.postMessage(
+                        {
+                            type: "CREATEINVOKER",
+                            tabId: tabId
+                        },
+                        "*"
+                    );
+                }, 500);
+            }, 500);
+        }
+    });
 });

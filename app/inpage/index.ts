@@ -1,7 +1,6 @@
 import Invoker, { MessageHandeler } from "../services/invoker";
 import { showSelectAccount, showTransaction } from "./dialogs";
 import { formatTx } from "../utils";
-import { extensionID } from "../constants.json";
 interface MakkiiConector {
     selectAccount: (
         callback: (accounts: CoinAccount, err: string) => {}
@@ -56,17 +55,28 @@ const process_accounts = (accounts_: Array<AccountList>) => {
 };
 
 const createInvoker = (name: string) => {
-    console.log("createInvoker=>", name);
     const serverName = `makkii:${name}`;
-    const port = chrome.runtime.connect(extensionID);
+    console.log("createInvoker=>", serverName);
     let connect = true;
-    port.onDisconnect.addListener(() => (connect = false));
     const messager: MessageHandeler<string> = {
         send: (evt, payload) => {
-            port.postMessage(payload);
+            window.postMessage(
+                {
+                    type: "FROM_PAGE",
+                    text: JSON.stringify(payload)
+                },
+                "*"
+            );
         },
         addListener: (evt, callback) => {
-            port.onMessage.addListener(callback);
+            window.addEventListener("message", (event) => {
+                if (event.source != window) return;
+                if (event.data.type && event.data.type == "FROM_CONTENT") {
+                    const payload = JSON.parse(event.data.text);
+                    // console.log("payload=>", event.data);
+                    callback(payload);
+                }
+            });
         },
         isConnect: () => {
             return connect;
@@ -120,6 +130,10 @@ const createInvoker = (name: string) => {
     return true;
 };
 
-chrome.runtime.sendMessage(extensionID, { type: "createInvoker" }, (res) => {
-    createInvoker(res.tabId);
+window.addEventListener("message", (event) => {
+    if (event.source != window) return;
+    if (event.data.type && event.data.type == "CREATEINVOKER") {
+        const tabId = event.data.tabId;
+        createInvoker(tabId);
+    }
 });
