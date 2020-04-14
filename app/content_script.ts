@@ -23,7 +23,6 @@ const inject = () => {
     injectScript(chrome.extension.getURL("/js/inpage.js"), "body");
     injectScript(chrome.extension.getURL("/js/vendor.js"), "body");
     injectFontFamily("Sansation", "assets/sansation.ttf");
-    injectFontFamily("Makkii", "assets/makkii.ttf");
 };
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {

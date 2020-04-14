@@ -5,6 +5,8 @@ import CoinBtcSvg from "../../assets/coin_btc.svg";
 import CoinEthSvg from "../../assets/coin_eth.svg";
 import CoinLtcSvg from "../../assets/coin_ltc.svg";
 import CoinTronSvg from "../../assets/coin_trx.svg";
+import SelectedSvg from "../../assets/icon_selected.svg";
+import UnselectedSvg from "../../assets/icon_unselected.svg";
 type AccountData = { name: string; address: string; amount: number };
 
 interface BasicProps {
@@ -65,9 +67,11 @@ export const SelectAccountComponent: React.FC<SelectProps> = (props) => {
     const { name, address, amount, cointype } = data;
     return (
         <div className="account select" onClick={() => onSelect(data)}>
-            <button
-                className={`select-box ${isSelect ? "select" : "unselect"}`}
-            />
+            {isSelect ? (
+                <SelectedSvg className="select-box" />
+            ) : (
+                <UnselectedSvg className="select-box" />
+            )}
             {coinImage(cointype)}
             <div className="acc-name">{name}</div>
             <div className="acc-addr">{formatOneLine(address, cointype)}</div>

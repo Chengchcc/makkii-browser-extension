@@ -1,10 +1,9 @@
 .account {
     position: relative;
-    width: 300px;
     height: 80px;
     background: #FFFFFF;
     border-radius: 5px;
-    margin: 10px 0;
+    margin: 10px 10px;
     font-family: Sansation;
     font-style: normal;
     font-weight: bold;
@@ -60,7 +59,6 @@
 }
 
 .select {
-    width: 320px;
     cursor: pointer;
 
     .img-coin {
@@ -75,26 +73,14 @@
         left: 100px;
     }
 
-    button.select-box {
+    .select-box {
         position: absolute;
         top: 30px;
         left: 10px;
         height: 20px;
         width: 20px;
-        font-family: Makkii;
         font-size: 20px;
-        display: block;
-        border: 0;
-        padding: 0;
-        outline: 0;
         background-color: rgba(0, 0, 0, 0);
     }
-
-    button.select::after {
-        content: '\e001';
-    }
-
-    button.unselect::after {
-        content: '\e002';
-    }
 }
+

@@ -57,7 +57,7 @@ const Dialog: React.FC<Props> = (props) => {
                 el.className = "dialog-container dialog-alert";
                 setTimeout(() => {
                     el.className = "dialog-container";
-                }, 500);
+                }, 200);
             }}
         >
             <div

@@ -1,21 +1,29 @@
 @page-width: 360px;
 @page-height: 600px;
 
-.section-list,
+.account-list,
 .acc-li {
-    ::-webkit-scrollbar {
+    &::-webkit-scrollbar {
         width: 8px;
+        height: 1px;
     }
 
-    ::-webkit-scrollbar-thumb {
+    &::-webkit-scrollbar-thumb {
         /*滚动条里面小方块*/
         border-radius: 10px;
         box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
         background: #5B68E2;
-
+        background-image: -webkit-linear-gradient(45deg,
+                rgba(255, 255, 255, 0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.2) 75%,
+                transparent 75%,
+                transparent);
     }
 
-    ::-webkit-scrollbar-track {
+    &::-webkit-scrollbar-track {
         /*滚动条里面轨道*/
         box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
         border-radius: 10px;

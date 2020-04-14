@@ -16,7 +16,7 @@
 }
 
 .dialog-alert {
-    animation: zoom 0.5s linear;
+    animation: zoom 0.2s linear;
 }
 
 .dialog-container {
@@ -43,6 +43,7 @@
     line-height: 30px;
     color: #FFFFFF;
     text-align: center;
+    user-select: none;
 }
 
 .disabled {
@@ -62,7 +63,7 @@
     font-weight: bold;
     font-size: 18px;
     line-height: 20px;
-
+    cursor: move;
     color: #000000;
 }
 
@@ -80,17 +81,10 @@
         transform: scale(1.05, 1.05);
     }
 
-    25% {
-        transform: scale(1, 1);
-    }
-
     50% {
-        transform: scale(1.05, 1.05);
-    }
-
-    75% {
         transform: scale(1, 1);
     }
+
 
     100% {
         transform: scale(1.05, 1.05);
