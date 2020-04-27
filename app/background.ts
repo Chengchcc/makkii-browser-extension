@@ -23,7 +23,17 @@ declare global {
 const store = createStore(rootState, {});
 window.store = store;
 wrapStore(store);
-
+connector.onDisconnect = () => {
+    console.log("onDisConnect=>");
+    store.dispatch(
+        createAction("status/update")({
+            isAlive: false,
+            isConnect: false,
+            isExpired: false
+        })
+    );
+    window.register();
+};
 // session register function
 let nextTimer = null;
 window.register = () =>
@@ -65,14 +75,6 @@ window.register = () =>
 
 window.disconnectChannel = async () => {
     connector.disconnectChannel();
-    store.dispatch(
-        createAction("status/update")({
-            isAlive: false,
-            isConnect: false,
-            isExpired: false
-        })
-    );
-    window.register();
 };
 
 window.getAccount = async (...args) => {

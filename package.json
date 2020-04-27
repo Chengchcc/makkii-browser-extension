@@ -44,7 +44,7 @@
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
     "redux": "^4.0.5",
-    "socket-bridge": "https://github.com/makkii-dev/makkii-connect.git#9c5bee493b161f72ddfa74312b3efd257950547a",
+    "socket-bridge": "https://github.com/makkii-dev/makkii-connect.git#b6f482c710adff640d1b2f2c26b0fd97a09f4acf",
     "socket.io-client": "^2.3.0",
     "webext-redux": "^2.1.6"
   },
