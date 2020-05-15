@@ -1,3 +1,11 @@
+/**
+ * runtime: chrome extension inject to web
+ * usage: Because content script can only access to BOM but not DOM,
+ *      content script will inject inpage script when chrome update by append script tag
+ * message stream:
+ *       background ->{chrome.runtime.onConnect.addListener,  chrome.runtime.connect} <- content
+ *       inpage -> {PostMessage, addEventListener} <- content
+ */
 function injectScript(file, node) {
     const th = document.getElementsByTagName(node)[0];
     const s = document.createElement("script");

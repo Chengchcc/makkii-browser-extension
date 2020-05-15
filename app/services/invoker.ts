@@ -1,5 +1,26 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-underscore-dangle */
+
+/**
+ *  A middleware that allows user binding to the functions defined in another end
+ *  example:
+ *     // A side;
+ *     const invoker = new Invoker({
+ *          prefix: 'A',
+ *          messager: Messager,
+ *          channel: 'exmaple'
+ *     });
+ *     const sayHello = ()=>console.log('hello');
+ *     invoker.define('sayHello', sayHello);
+ *     // B side;
+ *      const invoker = new Invoker({
+ *          prefix: 'A',
+ *          messager: Messager,
+ *          channel: 'exmaple'
+ *     });
+ *     const sayHello = invoker.bind('sayHello');
+ *     sayHello();// A side print "hello"
+ */
 import { Deferred } from "./deferred";
 
 const SYNC_COMMAND = "EXTENSION:SYNC";

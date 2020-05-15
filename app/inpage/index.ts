@@ -1,3 +1,8 @@
+/**
+ * usage: inject to webpage
+ * send tx dialog & select accounts dialog
+ * message stream  inpage ->{postmessage && addEventListener} <- content script
+ */
 import Invoker, { MessageHandeler } from "../services/invoker";
 import { showSelectAccount, showTransaction } from "./dialogs";
 import { formatTx } from "../utils";

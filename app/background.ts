@@ -1,3 +1,11 @@
+/***
+ *  runtime: chrome background
+ *  usage: connect to relay server and maintain popup store
+ *  message stream:
+ *         background ->{proxyStore, chrome.runtime.getBackgroundPage} <- popup
+ *         background ->{chrome.runtime.onConnect.addListener,  chrome.runtime.connect} <- content script
+ */
+
 import { wrapStore } from "webext-redux";
 import { createStore, Store } from "redux";
 import rootState, { rootReducers } from "./reducers";
@@ -217,6 +225,7 @@ chrome.runtime.onConnect.addListener((port) => {
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     // read changeInfo data and do something with it
     // like send the new url to contentscripts.js
+    // notify content script to  inject inpage script
     if (changeInfo.status === "complete") {
         console.log(tabId, changeInfo, tab);
         chrome.tabs.sendMessage(tabId, {

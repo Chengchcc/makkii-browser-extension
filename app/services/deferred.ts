@@ -1,3 +1,6 @@
+/**
+ * advanced promise
+ */
 export class Deferred<T> implements Promise<T> {
     readonly [Symbol.toStringTag]: "Promise";
 
